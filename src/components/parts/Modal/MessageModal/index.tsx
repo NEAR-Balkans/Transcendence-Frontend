@@ -30,7 +30,7 @@ const MESSAGE_TYPE_PROPS_DICT: Record<
     children: <AnimatedAlert />,
   },
   Loading: {
-    children: <LoadingProtocolIcon />,
+    children: <h1>Loading</h1>,
   },
 }
 

@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+  alchemix-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: alchemix-frontend:latest
+    container_name: alchemix-frontend
+    env_file:
+      - ./.env
+    ports:
+      - 3300:3000
+    restart: always

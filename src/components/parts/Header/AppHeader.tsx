@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { t } from '@lingui/macro'
 import { useRouter } from 'next/router'
 import { SymbolLay } from 'src/assets/images'
@@ -16,48 +17,39 @@ import { fontWeightHeavy } from 'src/styles/font'
 import { flexCenter } from 'src/styles/mixins'
 import { shortenAddress } from 'src/utils/address'
 import { BN_ZERO, formatAmt } from 'src/utils/number'
-import { APP, MAKAI, MARKETS, SWAP } from 'src/utils/routes'
+import { APP, VAULT, TRANSMUTER } from 'src/utils/routes'
 import styled, { css } from 'styled-components'
 import { HeaderWrapper } from './common'
+import { isSupportedChain } from 'src/libs/config'
 
 export const AppHeader = () => {
   const { pathname } = useRouter()
   const { account } = useWallet()
   const { data: user } = useUserData()
-  const { data: balance } = useWalletBalance()
+  const { balance } = useWalletBalance()
   const { open: openRewardModal } = useRewardModal()
   const { open: openWalletModal } = useWalletModal()
+  const { chainId, switchChain } = useWallet()
   const layInWallet = balance?.LAY || BN_ZERO
+
+  const isUnsupportedChain = useMemo(
+    () => chainId && !isSupportedChain(chainId),
+    [chainId],
+  )
+
   return (
     <AppHeaderWrapper>
-      <LogoLink href={APP} Icon={LogoProtocol} aria-label="App" />
+      <div></div>
       <Nav>
-        <Tab $active={pathname === APP}>
-          <Link href={APP}>{t`Dashboard`}</Link>
+        <Tab $active={pathname === VAULT}>
+          <Link href={VAULT}>Vault</Link>
         </Tab>
-        <Tab $active={pathname === MARKETS}>
-          <Link href={MARKETS}>{t`Markets`}</Link>
-        </Tab>
-        <Tab $active={pathname === MAKAI}>
-          <Link href={MAKAI}>{t`Makai`}</Link>
-        </Tab>
-        <Tab $active={pathname === SWAP}>
-          <Link href={SWAP}>{t`Swap`}</Link>
+        <Tab $active={pathname === TRANSMUTER}>
+          <Link href={TRANSMUTER}>Transmuter</Link>
         </Tab>
       </Nav>
       <Menu>
-        <MenuButton onClick={() => openRewardModal()} disabled={!user}>
-          <Image src={SymbolLay} alt="Starlay" width={20} height={20} />
-          {user ? (
-            <Reel
-              text={formatAmt(layInWallet.plus(user.rewards.unclaimedBalance), {
-                shorteningThreshold: 8,
-              })}
-            />
-          ) : (
-            '-'
-          )}
-        </MenuButton>
+        {isUnsupportedChain && <h1>Network is not supported</h1>}
         <MenuButton onClick={() => openWalletModal()} disabled={!!account}>
           {account ? shortenAddress(account) : t`Connect`}
         </MenuButton>

@@ -34,7 +34,7 @@ export const MARKET_CONFIGS: {
   [key in CustomMarket]: MarketDataType
 } = {
   [CUSTOM_MARKET.proto_astar]: {
-    chainId: CHAIN_ID.astar,
+    chainId: CHAIN_ID.aurora_testnet,
     enabledFeatures: {
       incentives: true,
     },
@@ -51,5 +51,5 @@ export const MARKET_CONFIGS: {
 export const CHAIN_MARKET_CONFIG: {
   [key in ChainId]: MarketDataType
 } = {
-  [CHAIN_ID.astar]: MARKET_CONFIGS.proto_astar,
+  [CHAIN_ID.aurora_testnet]: MARKET_CONFIGS.proto_astar,
 } as const

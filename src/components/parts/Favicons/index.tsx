@@ -26,8 +26,8 @@ export const Favicons = () => (
       color="#758bfd"
     />
     <link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml" />
-    <meta name="apple-mobile-web-app-title" content="Starlay" />
-    <meta name="application-name" content="Starlay" />
+    <meta name="apple-mobile-web-app-title" content="Alchemix" />
+    <meta name="application-name" content="Alchemix" />
     <meta name="msapplication-TileColor" content="#758bfd" />
     <meta name="msapplication-config" content="/browserconfig.xml" />
     <meta name="theme-color" content="#000000" />

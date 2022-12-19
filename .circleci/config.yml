@@ -1,0 +1,101 @@
+version: 2.1
+
+orbs:
+  snyk: snyk/snyk@1.1.2
+
+requires-machine-node: &requires-machine-node
+  machine:
+    image: ubuntu-2004:202010-01
+
+parameters:
+  discord-pass:
+    type: string
+    default: bash .circleci/discord-hook/discord-hook-pass.sh
+  discord-fail:
+    type: string
+    default: bash .circleci/discord-hook/discord-hook-fail.sh
+
+
+jobs:
+  snyk-check:
+    <<: *requires-machine-node
+    steps:
+      - checkout
+      - run:
+          command: |
+             npm install snyk -g
+             npm install -g snyk-to-html
+             snyk auth ${SNYK_TOKEN}
+             snyk test --json | snyk-to-html -o results.html && cp results.html /tmp/artifacts
+             if [[ $? == 1 || $? == 0 ]];
+             then
+                cp results.html /tmp/artifacts
+             fi
+      - store_artifacts:
+          path: /tmp/artifacts
+      - run:
+          command: << pipeline.parameters.discord-pass >>
+      - run:
+          command: << pipeline.parameters.discord-fail >>
+          when: on_fail
+
+
+  alchemix-build-deploy:
+    <<: *requires-machine-node
+    # store the image build artifact to tmp directory
+    #working_directory: /tmp
+    steps:
+      - checkout
+      - run:
+          name: Configure AWS Access Key ID
+          command: |
+            aws configure set aws_access_key_id \
+            ${AWS_ACCESS_KEY_ID}
+      - run:
+          name: Configure AWS Secret Access Key
+          command: |
+            aws configure set aws_secret_access_key \
+            ${AWS_SECRET_ACCESS_KEY}
+      - run:
+          name: Configure AWS default region
+          command: |
+            aws configure set region ${AWS_DEFAULT_REGION}
+      - run:
+          name: Install Dockle for docker linting
+          command: |
+            bash .circleci/docker-build.sh
+      - store_artifacts:
+          path: /tmp/artifacts
+          
+      - run:
+          name: Deploy latest through nested SSH
+          command: bash .circleci/deploy.sh
+
+      - run:
+          command: << pipeline.parameters.discord-fail >>
+          when: on_fail
+
+ 
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - snyk-check:
+          filters:
+            branches:
+              only:
+                - develop
+
+      - alchemix-build-deploy:
+          requires:
+            - snyk-check
+          filters:
+            branches:
+              only:
+                - develop
+
+
+    
+
+
+

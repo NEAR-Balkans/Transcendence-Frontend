@@ -29,7 +29,7 @@ const RewardModalBody = () => {
   const { locale } = useRouter()
   const { data: marketData } = useMarketData()
   const { data: user } = useUserData()
-  const { data: balance } = useWalletBalance()
+  const { balance } = useWalletBalance()
   const { icon, name, symbol } = ASSETS_DICT.LAY
   const unclaimed = user?.rewards.unclaimedBalance || BN_ZERO
   const inWallet = balance?.LAY || BN_ZERO

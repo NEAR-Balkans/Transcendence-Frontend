@@ -2,22 +2,32 @@ import { BigNumber } from 'ethers'
 import { ChainId, CHAIN_ID, NETWORK_CONFIG } from './network'
 
 export const getChainInfo = (chainId: number) =>
-  // @ts-expect-error
-  CHIAN_INFO[chainId]
+  CHAIN_INFO[chainId]
 
 const toChainIdHex = (chainId: number) =>
   `0x${(+BigNumber.from(chainId)).toString(16)}`
 
-const CHIAN_INFO: Record<ChainId, AddEthereumChainParameter> = {
-  [CHAIN_ID.astar]: {
-    chainId: toChainIdHex(CHAIN_ID.astar),
-    chainName: NETWORK_CONFIG[CHAIN_ID.astar].name,
+const CHAIN_INFO: Record<ChainId, AddEthereumChainParameter> = {
+  [CHAIN_ID.aurora]: {
+    chainId: toChainIdHex(CHAIN_ID.aurora),
+    chainName: NETWORK_CONFIG[CHAIN_ID.aurora].name,
     nativeCurrency: {
-      name: 'Astar',
-      symbol: NETWORK_CONFIG[CHAIN_ID.astar].baseAsset.symbol,
+      name: 'ETH',
+      symbol: 'ETH',
       decimals: 18,
     },
-    rpcUrls: [...NETWORK_CONFIG[CHAIN_ID.astar].publicJsonRPCUrl],
-    blockExplorerUrls: NETWORK_CONFIG[CHAIN_ID.astar].explorerLinks,
+    rpcUrls: [...NETWORK_CONFIG[CHAIN_ID.aurora].publicJsonRPCUrl],
+    blockExplorerUrls: [...NETWORK_CONFIG[CHAIN_ID.aurora].explorerLinks],
+  },
+  [CHAIN_ID.aurora_testnet]: {
+    chainId: toChainIdHex(CHAIN_ID.aurora_testnet),
+    chainName: NETWORK_CONFIG[CHAIN_ID.aurora_testnet].name,
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: [...NETWORK_CONFIG[CHAIN_ID.aurora_testnet].publicJsonRPCUrl],
+    blockExplorerUrls: [...NETWORK_CONFIG[CHAIN_ID.aurora_testnet].explorerLinks],
   },
 }

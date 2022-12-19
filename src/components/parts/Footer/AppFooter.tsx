@@ -24,10 +24,9 @@ export const AppFooter = asStyled(({ className }) => {
     <StyledFooter className={className}>
       <Content>
         <Nav>
-          <LatestBlock>{t`Latest Block: ${blockNumber}`}</LatestBlock>
-          <Link href={DOCS}>{t`Docs`}</Link>
-          <Link href={GOVERNANCE}>{t`Governance`}</Link>
-          <Link href={SUPPORT}>{t`Support`}</Link>
+          <Link>{t`Docs`}</Link>
+          <Link>{t`Governance`}</Link>
+          <Link>{t`Support`}</Link>
         </Nav>
         <Control>
           <DropdownButton onClick={toggleLocaleMenuOpen}>

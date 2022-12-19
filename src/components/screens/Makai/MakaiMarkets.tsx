@@ -32,7 +32,7 @@ export const MakaiMarkets = asStyled(({ className }) => {
 
   const { data: marketData } = useMarketData()
   const { data: userData } = useUserData()
-  const { data: balances } = useWalletBalance()
+  const { balance } = useWalletBalance()
   const { open: openWalletModal } = useWalletModal()
   const { open: openLoopingModal } = useLoopingModal()
   const {
@@ -51,7 +51,7 @@ export const MakaiMarkets = asStyled(({ className }) => {
     userSummary: userData.summary,
     userAssetBalance: {
       ...userData.balanceByAsset[asset.symbol],
-      inWallet: balances[asset.symbol],
+      inWallet: balance[asset.symbol],
     },
   })
 
@@ -73,7 +73,7 @@ export const MakaiMarkets = asStyled(({ className }) => {
           rows={markets.map((asset) =>
             marketRow({
               asset,
-              balance: balances[asset.symbol],
+              balance: balance[asset.symbol],
               onClick: userData
                 ? () =>
                     openLoopingModal({
@@ -83,7 +83,7 @@ export const MakaiMarkets = asStyled(({ className }) => {
                       userSummary: userData.summary,
                       userAssetBalance: {
                         ...userData.balanceByAsset[asset.symbol],
-                        inWallet: balances[asset.symbol],
+                        inWallet: balance[asset.symbol],
                       },
                     })
                 : openWalletModal,

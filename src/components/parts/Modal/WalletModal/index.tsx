@@ -43,7 +43,8 @@ const Wallet: VFC<ModalContentProps> = ({ close }) => {
 
 const BodyLoading: VFC = () => (
   <BodyDiv>
-    <LoadingProtocolIcon />
+    {/* <LoadingProtocolIcon /> */}
+    <b>Loading...</b>
     <p>{t`Connecting the wallet...`}</p>
   </BodyDiv>
 )

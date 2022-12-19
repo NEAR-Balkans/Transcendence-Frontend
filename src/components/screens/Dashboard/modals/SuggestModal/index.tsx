@@ -17,7 +17,7 @@ export const Suggest: VFC<
       }
     }
 > = ({ arthswapPair, ...props }) => {
-  const { data: balance } = useWalletBalance()
+  const { balance } = useWalletBalance()
   const symbol = props.asset.displaySymbol || props.asset.symbol
   return (
     <DefaultModalContent

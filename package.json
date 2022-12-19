@@ -1,5 +1,5 @@
 {
-  "name": "starlay-ui",
+  "name": "alchemix-frontend",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -9,7 +9,6 @@
     "lint": "next lint",
     "test": "jest --watch",
     "test:once": "jest",
-    "postinstall": "yarn i18n:extract && yarn i18n:compile",
     "postbuild": "next-sitemap",
     "i18n:extract": "lingui extract",
     "i18n:compile": "lingui compile",

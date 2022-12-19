@@ -1,70 +1,37 @@
-import { normalizeBN } from '@starlay-finance/math-utils'
-import { ChainId } from 'src/libs/config'
-import {
-  walletBalanceProviderContract,
-  WalletBalanceProviderInterface,
-} from 'src/libs/wallet-balance-provider'
-import { AssetSymbol, WalletBalance } from 'src/types/models'
-import { SWRResponseWithFallback } from 'src/types/swr'
-import { EthereumAddress } from 'src/types/web3'
-import { generateSymbolDict } from 'src/utils/assets'
-import { BN_ZERO } from 'src/utils/number'
-import useSWR from 'swr'
-import useSWRImmutable from 'swr/immutable'
-import { useMarketData } from './useMarketData'
-import { useStaticRPCProvider } from './useStaticRPCProvider'
 import { useWallet } from './useWallet'
+import useSWR from 'swr'
+import { ERC20Mock } from 'src/abis'
+import { Contract } from 'ethers'
+import { addresses } from 'src/libs/config/addresses'
 
-const EMPTY_WALLET_BALANCE: WalletBalance = generateSymbolDict(BN_ZERO)
+/** 
+ * @note : in case no address or abi is provided, it default to ERC20Mock
+ */
 
-export const useWalletBalance = () => {
-  const { account } = useWallet()
-  const { data: provider } = useWalletBalanceProvider()
-  const { data: marketData } = useMarketData()
-  return useSWR(
-    () =>
-      account &&
-      provider &&
-      provider.chainId === marketData?.chainId && [
-        'wallet-balance',
-        provider.chainId,
-        account,
-      ],
-    (_key: string, _chainId: ChainId, account: EthereumAddress) =>
-      getWalletBalance(provider!.provider, account, marketData!.assets),
-    { fallbackData: EMPTY_WALLET_BALANCE },
-  ) as SWRResponseWithFallback<WalletBalance>
-}
-
-const useWalletBalanceProvider = () => {
-  const { data: provider } = useStaticRPCProvider()
-  return useSWRImmutable(
-    provider && ['walletbalanceprovider', provider.chainId],
-    () => ({
-      chainId: provider!.chainId,
-      provider: walletBalanceProviderContract(provider!),
-    }),
+export const useWalletBalance = (address?: string, account?: string) => {
+  const { chainId, account: defaultAccount, signer } = useWallet()
+  const contract = new Contract(
+    address || addresses(chainId).ERC20Mock,
+    ERC20Mock.abi,
+    signer,
   )
-}
-
-const getWalletBalance = async (
-  walletBalanceProvider: WalletBalanceProviderInterface,
-  account: EthereumAddress,
-  assets: {
-    symbol: AssetSymbol
-    underlyingAsset: EthereumAddress
-    decimals: number
-  }[],
-): Promise<WalletBalance> => {
-  const balancesDict =
-    await walletBalanceProvider.getBeforeNormalizedWalletBalance(account)
-  return assets.reduce((prev, asset) => {
-    const balance = balancesDict[asset.underlyingAsset]
-    return {
-      ...prev,
-      [asset.symbol]: balance
-        ? normalizeBN(balance.toString(), asset.decimals)
-        : BN_ZERO,
+  const fetcher =
+    () =>
+    (...args: any) => {
+      const [key, method, ...params] = args
+      return contract[method](...params)
     }
-  }, {}) as WalletBalance
+  const { data: balance, mutate } = useSWR([address || addresses(chainId).ERC20Mock, 'balanceOf', account ||  defaultAccount], {
+    fetcher: fetcher(),
+  })
+
+  const { data: symbol } = useSWR([address || addresses(chainId).ERC20Mock, 'symbol'], {
+    fetcher: fetcher(),
+  })
+
+  const { data: decimals } = useSWR([address || addresses(chainId).ERC20Mock, 'decimals'], {
+    fetcher: fetcher()
+  })
+
+  return { balance, symbol, decimals, mutate }
 }

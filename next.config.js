@@ -1,6 +1,18 @@
 const { locales, sourceLocale } = require('./lingui.config.js')
 
 module.exports = {
+  experimental: {
+    outputStandalone: true,
+  },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/app/vault',
+        permanent: true,
+      },
+    ]
+  },
   i18n: {
     locales,
     defaultLocale: sourceLocale,

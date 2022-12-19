@@ -54,7 +54,7 @@ export const Market = asStyled(({ className }) => {
   const { data: arthswapData } = useArthswapData()
 
   const { data: user } = useUserData()
-  const { data: balance } = useWalletBalance()
+  const { balance } = useWalletBalance()
   const { open: openDepositModal } = useDepositModal()
   const { open: openBorrowModal } = useBorrowModal()
   const { open: openCollateralModal } = useCollateralModal()

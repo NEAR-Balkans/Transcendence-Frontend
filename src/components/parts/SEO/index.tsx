@@ -42,7 +42,6 @@ export const SEO: VFC<SEOProps> = (props) => {
     { property: 'og:type', content: 'website' },
     { property: 'og:title', content: title },
     { property: 'og:description', content: description },
-    { property: 'og:image', content: siteImage },
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:creator', content: author },
     { name: 'twitter:title', content: title },
